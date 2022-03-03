@@ -23,6 +23,4 @@ We recommend a workflow that triggers on pull request and (in parallel) builds:
  
 And then you can use the action to save your library or binary from each build, and run [abidiff](https://sourceware.org/libabigail/manual/abidiff.html).
 Depending on your use case for the run, you can also set a variable to indicate if
-the test should be allowed to fail.
-
-**under development** 
+the test should be allowed to fail. Here is an example.
