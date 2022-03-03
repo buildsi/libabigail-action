@@ -37,7 +37,7 @@ jobs:
     - name: Build Binary
       run: |
          make
-         cp libmath.so libmath.1.so
+         cp libmath.so libmath.2.so
 
     - name: Upload results
       if: success()
