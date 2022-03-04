@@ -123,8 +123,14 @@ jobs:
     # You can add allow_fail: true if you expect a failure
     - name: Compare Release to Pull Request
       uses: buildsi/libabigail-action@main
+      id: release-to-pr
       with: 
         abidiff: libmath.1.so libmath.dev.so
+
+    - name: Example to show output
+      env:
+        retval: ${{ steps.release-to-pr.outputs.retval }}
+      run: echo "The return code was ${retval}, do something custom here"
 ```
 
 There are other checks you can do that we might recommend, such as looking at the return
