@@ -24,3 +24,95 @@ We recommend a workflow that triggers on pull request and (in parallel) builds:
 And then you can use the action to save your library or binary from each build, and run [abidiff](https://sourceware.org/libabigail/manual/abidiff.html).
 Depending on your use case for the run, you can also set a variable to indicate if
 the test should be allowed to fail. Here is an example.
+
+### Example 
+
+Let's say we have the repository [buildsi/build-abi-test-mathclient](https://github.com/buildsi/build-abi-test-mathclient).
+We have two releases, 1.0 andn 2.0 (on the main branch) and version 2.0 has an ABi break. For the purposes
+of the example, let's pretend version 2.0 isn't released and we are opening a PR against the current main (still with version 1.0)
+and we want to ensure that no ABI is broken. We would want to:
+
+ - Do a build of the main branch
+ - Do a build of our pull request
+ - Do a build of the last release (1.0)
+
+And for all of these cases, we'd want to run `abidiff` to ensure there are no breaks! Note that since
+we are going to be saving our binaries (or libraries in this case) as artifacts and then loading them
+in the same job, we are artificially renaming them. If you've set the `SONAME` this shouldn't be an issue.
+Our workflow might look like the following:
+
+```yaml
+name: Run Libabigail
+on: [pull_request]
+
+jobs:
+  build-release:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Build Previous Release
+      uses: actions/checkout@v3
+      with:
+        ref: 1.0.0
+    - name: Build Release Binary and Rename
+      run: make && cp libmath.so libmath.1.so
+    - name: Upload results
+      if: success()
+      uses: actions/upload-artifact@v2-preview
+      with:
+        name: libmath.1.so
+        path: libmath.1.so
+
+  # Note that this would normally check out the PR branch
+  # but since we are in a separate repo we are checking out main.
+  # For a robust check of API you should be building the release, main branch,
+  # and PR to compare against to!
+  build-main:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Build Previous Release
+      uses: actions/checkout@v3
+      with:
+        repository: buildsi/build-abi-test-mathclient
+        ref: main
+    - name: Build Binary
+      run: |
+         make
+         cp libmath.so libmath.2.so
+
+    - name: Upload results
+      if: success()
+      uses: actions/upload-artifact@v2-preview
+      with:
+        name: libmath.2.so
+        path: libmath.2.so
+
+  libabigail:
+    runs-on: ubuntu-latest
+    needs: [build-release, build-main]
+    steps:
+    - name: Download Previous Release
+      uses: actions/download-artifact@v2
+      with:
+        name: libmath.1.so
+
+    - name: Download Latest Main (or PR)
+      uses: actions/download-artifact@v2
+      with:
+        name: libmath.2.so
+    - name: Show Files
+      run: ls
+
+    - name: Checkout Libabigail Action
+      uses: actions/checkout@v3
+
+    - name: Run Libabigail without ABI Break
+      uses: ./
+      with: 
+        abidiff: libmath.1.so libmath.1.so
+
+    - name: Run Libabigail with ABI Break
+      uses: ./
+      with: 
+        abidiff: libmath.1.so libmath.2.so
+        allow_fail: true
+```
