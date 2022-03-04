@@ -28,7 +28,7 @@ the test should be allowed to fail. Here is an example.
 ### Example 
 
 Let's say we have the repository [buildsi/build-abi-test-mathclient](https://github.com/buildsi/build-abi-test-mathclient).
-We have two releases, 1.0 andn 2.0 (on the main branch) and version 2.0 has an ABi break. For the purposes
+We have two releases, 1.0 andn 2.0 (on the main branch) and version 2.0 has an ABI break. For the purposes
 of the example, let's pretend version 2.0 isn't released and we are opening a PR against the current main (still with version 1.0)
 and we want to ensure that no ABI is broken. We would want to:
 
