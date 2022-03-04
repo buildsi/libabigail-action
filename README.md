@@ -56,39 +56,42 @@ jobs:
     - name: Build Release Binary and Rename
       run: make && cp libmath.so libmath.1.so
     - name: Upload results
-      if: success()
       uses: actions/upload-artifact@v2-preview
       with:
         name: libmath.1.so
         path: libmath.1.so
 
-  # Note that this would normally check out the PR branch
-  # but since we are in a separate repo we are checking out main.
-  # For a robust check of API you should be building the release, main branch,
-  # and PR to compare against to!
+  build-pull-request:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Build Pull Request
+      uses: actions/checkout@v3
+    - name: Build Binary and Rename
+      run: make && cp libmath.so libmath.dev.so
+    - name: Upload results
+      uses: actions/upload-artifact@v2-preview
+      with:
+        name: libmath.dev.so
+        path: libmath.dev.so
+
   build-main:
     runs-on: ubuntu-latest
     steps:
-    - name: Build Previous Release
+    - name: Build Main
       uses: actions/checkout@v3
       with:
-        repository: buildsi/build-abi-test-mathclient
         ref: main
     - name: Build Binary
-      run: |
-         make
-         cp libmath.so libmath.2.so
-
+      run: make && cp libmath.main.so libmath.main.so
     - name: Upload results
-      if: success()
       uses: actions/upload-artifact@v2-preview
       with:
-        name: libmath.2.so
-        path: libmath.2.so
+        name: libmath.main.so
+        path: libmath.main.so
 
   libabigail:
     runs-on: ubuntu-latest
-    needs: [build-release, build-main]
+    needs: [build-release, build-main, build-pull-request]
     steps:
     - name: Download Previous Release
       uses: actions/download-artifact@v2
@@ -98,21 +101,33 @@ jobs:
     - name: Download Latest Main (or PR)
       uses: actions/download-artifact@v2
       with:
-        name: libmath.2.so
+        name: libmath.main.so
+
+    - name: Download Pull Request Build
+      uses: actions/download-artifact@v2
+      with:
+        name: libmath.dev.so
+
     - name: Show Files
       run: ls
 
     - name: Checkout Libabigail Action
       uses: actions/checkout@v3
 
-    - name: Run Libabigail without ABI Break
-      uses: ./
+    # You can add allow_fail: true if you expect a failure
+    - name: Compare Main to Pull Request
+      uses: buildsi/libabigail-action@main
       with: 
-        abidiff: libmath.1.so libmath.1.so
+        abidiff: libmath.main.so libmath.dev.so
 
-    - name: Run Libabigail with ABI Break
-      uses: ./
+    # You can add allow_fail: true if you expect a failure
+    - name: Compare Release to Pull Request
+      uses: buildsi/libabigail-action@main
       with: 
-        abidiff: libmath.1.so libmath.2.so
-        allow_fail: true
+        abidiff: libmath.1.so libmath.dev.so
 ```
+
+There are other checks you can do that we might recommend, such as looking at the return
+code of the run, and allowing it to fail only if the soname is changed. We set an output
+to help with that! If you'd like further help setting this up or example please
+[let us know](https://github.com/buildsi/libabigail-action/issues).

@@ -75,4 +75,4 @@ jobs:
       uses: ./
       with: 
         abidiff: libmath.1.so libmath.2.so
-        allow_fail: true
+        allow_fail: false
