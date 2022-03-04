@@ -28,7 +28,7 @@ the test should be allowed to fail. Here is an example.
 ### Example 
 
 Let's say we have the repository [buildsi/build-abi-test-mathclient](https://github.com/buildsi/build-abi-test-mathclient).
-We have two releases, 1.0 andn 2.0 (on the main branch) and version 2.0 has an ABi break. For the purposes
+We have two releases, 1.0 andn 2.0 (on the main branch) and version 2.0 has an ABI break. For the purposes
 of the example, let's pretend version 2.0 isn't released and we are opening a PR against the current main (still with version 1.0)
 and we want to ensure that no ABI is broken. We would want to:
 
@@ -123,8 +123,14 @@ jobs:
     # You can add allow_fail: true if you expect a failure
     - name: Compare Release to Pull Request
       uses: buildsi/libabigail-action@main
+      id: release-to-pr
       with: 
         abidiff: libmath.1.so libmath.dev.so
+
+    - name: Example to show output
+      env:
+        retval: ${{ steps.release-to-pr.outputs.retval }}
+      run: echo "The return code was ${retval}, do something custom here"
 ```
 
 There are other checks you can do that we might recommend, such as looking at the return

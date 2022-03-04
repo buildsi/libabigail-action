@@ -11,6 +11,10 @@ inputs:
     required: true
     default: false
     
+outputs:
+  retval:
+    description: The return value of the action for you to act on   
+ 
 runs:
   using: "docker"
   image: "Dockerfile"

@@ -73,6 +73,12 @@ jobs:
 
     - name: Run Libabigail with ABI Break
       uses: ./
+      id: with_error
       with: 
         abidiff: libmath.1.so libmath.2.so
         allow_fail: false
+     
+    - name: Example to show output
+      env:
+        retval: ${{ steps.with_error.outputs.retval }}
+      run: echo "The return code was ${retval}, do something custom here"

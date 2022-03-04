@@ -15,6 +15,7 @@ echo "${COMMAND}"
 ${COMMAND} || (
    retval=$?
    printf "Return value: $retval\n"  
+   echo "::set-output name=retval::${retval}"
 
    # Failure, but we are allowing it
    if [[ ${retval} -ne 0 ]] && [[ "$INPUT_ALLOW_FAIL" == "false" ]]; then
