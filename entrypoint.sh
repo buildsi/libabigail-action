@@ -24,7 +24,7 @@ ${COMMAND} || (
 
    # Failure and don't allow it
    if [[ ${retval} -ne 0 ]] && [[ "$INPUT_ALLOW_FAIL" == "true" ]]; then
-       printf "abidiff returned returned error code, there detected ABI changes. 😭️\n"
+       printf "abidiff returned returned error code, there are detected ABI changes. 😭️\n"
        exit $retval
    fi       
 

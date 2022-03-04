@@ -6,7 +6,11 @@ inputs:
   abidiff:
     description: "Library inputs required to run abidiff (e.g., should be two libs in order of diff)"
     required: true
-
+  allow_fail: 
+    description: "Allow the ABI check to fail."
+    required: true
+    default: false
+    
 runs:
   using: "docker"
   image: "Dockerfile"
