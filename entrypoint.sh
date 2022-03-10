@@ -36,3 +36,4 @@ ${COMMAND} || (
        exit $retval
    fi       
 )
+printf "Return value: $?\n"
