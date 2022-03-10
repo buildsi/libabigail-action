@@ -7,9 +7,8 @@ binary interface. How can you do this?
  - For every pull request, check the abidiff against the latest main branch
  - Also have the option to check the PR against the release
  - Require a version bump if there are ABI breaks
- 
- 
-For the libabigail base we use [ghcr.io/auildsi/libabigail](https://github.com/buildsi/build-abi-containers/pkgs/container/libabigail)
+  
+For the libabigail base we use [ghcr.io/buildsi/libabigail](https://github.com/buildsi/build-abi-containers/pkgs/container/libabigail)
  and you can request a new release of the [Dockerfile](https://github.com/buildsi/build-abi-containers/blob/main/docker/libabigail/Dockerfile)
  if it's available for libabigail.
  
@@ -136,4 +135,5 @@ jobs:
 There are other checks you can do that we might recommend, such as looking at the return
 code of the run, and allowing it to fail only if the soname is changed. We set an output
 to help with that! If you'd like further help setting this up or example please
-[let us know](https://github.com/buildsi/libabigail-action/issues).
+[let us know](https://github.com/buildsi/libabigail-action/issues). There are
+additional examples in [examples](examples) (including the one above!)
