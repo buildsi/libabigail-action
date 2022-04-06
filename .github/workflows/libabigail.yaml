@@ -70,6 +70,7 @@ jobs:
       uses: ./
       with: 
         abidiff: libmath.1.so libmath.1.so
+        abidw: "--abidiff libmath.1.so"
 
     - name: Run Libabigail with ABI Break
       uses: ./
