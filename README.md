@@ -118,6 +118,7 @@ jobs:
       uses: buildsi/libabigail-action@main
       with: 
         abidiff: libmath.main.so libmath.dev.so
+        abidw: "--abidiff libmath.dev.so"
 
     # You can add allow_fail: true if you expect a failure
     - name: Compare Release to Pull Request
